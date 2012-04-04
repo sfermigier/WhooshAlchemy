@@ -7,6 +7,9 @@ Supports the easy text-indexing of SQLAlchemy model fields.
 
 BSD license.
 
+Written by Stefane Fermigier (http://www.fermigier.com/) based on
+Flask-WhooshAlchemy written by Karl Gyllstromk.
+
 
 Quick start example
 -------------------
