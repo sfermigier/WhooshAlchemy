@@ -11,7 +11,7 @@ long_description = open('README.rst').read()
 
 setup(
     name='WhooshAlchemy',
-    version='0.1.3',
+    version='0.1.4',
     url='https://github.com/sfermigier/WhooshAlchemy',
     license='BSD',
     author='Stefane Fermigier',
