@@ -1,0 +1,13 @@
+TODO:
+-----
+
+- Rewrite README.
+
+
+DONE:
+-----
+
+- Fix Unicode bug (allow indexing sqlalchemy.types.UnicodeText).
+- Clean up code
+- Use SQLAlchemy's events instead of Flask's signals.
+

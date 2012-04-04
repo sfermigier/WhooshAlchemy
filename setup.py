@@ -2,7 +2,7 @@
 WhooshAlchemy
 -------------
 
-Whoosh extension to SQLAlchemy
+Whoosh extension to SQLAlchemy.
 """
 
 from setuptools import setup
@@ -10,7 +10,7 @@ from setuptools import setup
 setup(
     name='WhooshAlchemy',
     version='0.1',
-    url='https://github.com/gyllstromk/Flask-WhooshAlchemy',
+    url='https://github.com/sfermigier/WhooshAlchemy',
     license='BSD',
     author='Stefane Fermigier',
     author_email='sf@fermigier.com',
@@ -36,5 +36,4 @@ setup(
         #'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     test_suite = 'test',
-
 )
