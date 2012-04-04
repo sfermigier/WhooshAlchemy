@@ -23,10 +23,6 @@ Standard SQLAlchemy imports:
 >>> from sqlalchemy.engine import create_engine
 >>> from sqlalchemy.orm.session import sessionmaker
 
-More imports:
-
->>> import datetime
-
 Setup SQLAlchemy:
 
 >>> engine = create_engine('sqlite:///:memory:')
@@ -43,7 +39,6 @@ Our model:
 ...   id = Column(Integer, primary_key=True)
 ...   title = Column(Text)
 ...   content = Column(Text)
-...   created = Column(DateTime, default=datetime.datetime.utcnow)
 ...
 ...   def __repr__(self):
 ...       return '{0}(title={1})'.format(self.__class__.__name__, self.title)
@@ -64,23 +59,22 @@ Create a blog post:
 
 Perform a few searches:
 
->>> print list(BlogPost.search_query(u'cool'))
+>>> list(BlogPost.search_query(u'cool'))
 [BlogPost(title=My cool title)]
->>> print list(BlogPost.search_query(u'first'))
+>>> list(BlogPost.search_query(u'first'))
 [BlogPost(title=My cool title)]
 
-Note: the response is a :class:`BaseQuery` object, so you can append other SQL operations:
+Note: the response is a ``BaseQuery`` object, so you can append other SQL operations:
 
->>> two_days_ago = datetime.date.today() - datetime.timedelta(2)
->>> recent_matches = BlogPost.search_query(u'first').filter(BlogPost.created >= two_days_ago)
-
+>>> list(BlogPost.search_query(u'first').filter(BlogPost.id >= 0))
+[BlogPost(title=My cool title)]
 
 Using with Flask
 ----------------
 
-Setup you Flask app, create the `db` object (`db = SQLAlchemy(app)`), import your models.
+Setup you Flask app, create the ``db`` object (``db = SQLAlchemy(app)``), import your models.
 
-Set `WHOOSH_BASE` to your Whoosh index directory in your Flask , then create the index service
+Set ``WHOOSH_BASE`` to your Whoosh index directory in your Flask , then create the index service
 and register your models:
 
 >>> index_service = IndexService(config=app.config)
