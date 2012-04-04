@@ -1,6 +1,7 @@
 TODO:
 -----
 
+- Automatic discovery of model classes instead of manual registration.
 - Waiting for feedback.
 
 DONE:
