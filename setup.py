@@ -6,10 +6,13 @@ Whoosh extension to SQLAlchemy.
 """
 
 from setuptools import setup
+import os
+
+os.rename("README.rst", "README.txt")
 
 setup(
     name='WhooshAlchemy',
-    version='0.1',
+    version='0.1.2',
     url='https://github.com/sfermigier/WhooshAlchemy',
     license='BSD',
     author='Stefane Fermigier',
@@ -37,3 +40,5 @@ setup(
     ],
     test_suite = 'test',
 )
+
+os.rename("README.txt", "README.rst")

@@ -9,3 +9,4 @@ doctest:
 clean:
 	rm -rf *.pyc
 	rm -rf *.egg-info
+	rm -rf build dist
