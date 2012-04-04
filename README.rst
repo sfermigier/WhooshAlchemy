@@ -1,41 +1,90 @@
-Flask-WhooshAlchemy extension
-===================
+WhooshAlchemy
+=============
 
 ALPHA but actively developed.
 
 Supports the easy text-indexing of SQLAlchemy model fields.
 
-BSD license
+BSD license.
+
 
 Quick start example
------
+-------------------
 
->>> import flask_whooshalchemy
->>>
->>> db = SQLAlchemy(app)  # see flask-sqlalchemy
->>>
->>> class BlogPost(db.Model):
+Import this library:
+
+>>> from whooshalchemy import IndexService
+
+Standard SQLAlchemy imports:
+
+>>> from sqlalchemy.ext.declarative import declarative_base
+>>> from sqlalchemy.schema import Column
+>>> from sqlalchemy.types import Integer, Text, DateTime
+>>> from sqlalchemy.engine import create_engine
+>>> from sqlalchemy.orm.session import sessionmaker
+
+More imports:
+
+>>> import datetime
+
+Setup SQLAlchemy:
+
+>>> engine = create_engine('sqlite:///:memory:')
+>>> Session = sessionmaker(bind=engine)
+>>> session = Session()
+>>> Base = declarative_base()
+
+Our model:
+
+>>> class BlogPost(Base):
 ...   __tablename__ = 'blogpost'
-...   __searchable__ = ['title', 'body']  # these fields will be indexed by whoosh
+...   __searchable__ = ['title', 'content']  # these fields will be indexed by whoosh
 ...
-...   id = app.db.Column(app.db.Integer, primary_key=True)
-...   title = app.db.Column(app.db.Text)
-...   content = app.db.Column(app.db.Text)
-...   created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+...   id = Column(Integer, primary_key=True)
+...   title = Column(Text)
+...   content = Column(Text)
+...   created = Column(DateTime, default=datetime.datetime.utcnow)
 ...
 ...   def __repr__(self):
 ...       return '{0}(title={1})'.format(self.__class__.__name__, self.title)
 ...
->>> app.config['WHOOSH_BASE'] = 'path/to/whoosh/base'
->>> m = BlogPost(title='My cool title', content='This is the first post.')
->>> db.session.add(m); db.session.commit()
->>>
->>> print list(BlogPost.search_query('cool'))
-... [BlogPost(title='My cool title')]
->>> print list(BlogPost.search_query('first'))
-... [BlogPost(title='My cool title')]
->>>
->>> # Note: the response is a :class:`BaseQuery` object, so you can append other SQL operations:
->>>
+>>> Base.metadata.create_all(engine)
+
+Create and init indexing service:
+
+>>> config = {"WHOOSH_BASE": "/tmp/whoosh"}
+>>> index_service = IndexService(config=config, session=session)
+>>> index_service.register_class(BlogPost)
+FileIndex(FileStorage('/tmp/whoosh/BlogPost'), 'MAIN')
+
+Create a blog post:
+
+>>> m = BlogPost(title=u'My cool title', content=u'This is the first post.')
+>>> session.add(m); session.commit()
+
+Perform a few searches:
+
+>>> print list(BlogPost.search_query(u'cool'))
+[BlogPost(title=My cool title)]
+>>> print list(BlogPost.search_query(u'first'))
+[BlogPost(title=My cool title)]
+
+Note: the response is a :class:`BaseQuery` object, so you can append other SQL operations:
+
 >>> two_days_ago = datetime.date.today() - datetime.timedelta(2)
->>> recent_matches = BlogPost.search_query('first').filter(BlogPost.created >= two_days_ago)
+>>> recent_matches = BlogPost.search_query(u'first').filter(BlogPost.created >= two_days_ago)
+
+
+Using with Flask
+----------------
+
+Setup you Flask app, create the `db` object (`db = SQLAlchemy(app)`), import your models.
+
+Set `WHOOSH_BASE` to your Whoosh index directory in your Flask , then create the index service
+and register your models:
+
+>>> index_service = IndexService(config=app.config)
+>>> index_service.register_class(MyFirstModel)
+>>> index_service.register_class(MySecondModel)
+
+Etc.

@@ -1,7 +1,7 @@
 """
 
-    whooshalchemy flask extension
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    WhooshAlchemy
+    ~~~~~~~~~~~~~
 
     Adds Whoosh indexing capabilities to SQLAlchemy models.
 
@@ -11,6 +11,7 @@
     :copyright: (c) 2012 by Karl Gyllstrom
     :license: BSD (see LICENSE.txt)
 """
+
 from __future__ import absolute_import
 
 import sqlalchemy
@@ -27,12 +28,12 @@ import os
 
 class IndexService(object):
 
-  def __init__(self, session=None, config=None, whoosh_base=None):
+  def __init__(self, config=None, session=None, whoosh_base=None):
     self.session = session
     if not whoosh_base and config:
       whoosh_base = config.get("WHOOSH_BASE")
     if not whoosh_base:
-      whoosh_base = "whoosh_indexes"
+      whoosh_base = "whoosh_indexes"  # Default value
     self.whoosh_base = whoosh_base
     self.indexes = {}
 
@@ -40,19 +41,23 @@ class IndexService(object):
     event.listen(Session, "after_commit", self.after_commit)
 
   def register_class(self, model_class):
-    wi = os.path.join(self.whoosh_base, model_class.__name__)
+    """
+    Registers a model class, by creating the necessary Whoosh index if needed.
+    """
+
+    index_path = os.path.join(self.whoosh_base, model_class.__name__)
 
     schema, primary = self._get_whoosh_schema_and_primary(model_class)
 
-    if whoosh.index.exists_in(wi):
-      index = whoosh.index.open_dir(wi)
+    if whoosh.index.exists_in(index_path):
+      index = whoosh.index.open_dir(index_path)
     else:
-      if not os.path.exists(wi):
-        os.makedirs(wi)
-      index = whoosh.index.create_in(wi, schema)
+      if not os.path.exists(index_path):
+        os.makedirs(index_path)
+      index = whoosh.index.create_in(index_path, schema)
 
     self.indexes[model_class.__name__] = index
-    model_class.search_query = Searcher(self.session, model_class, primary, index)
+    model_class.search_query = Searcher(model_class, primary, index, self.session)
     return index
 
   def index_for_model_class(self, model_class):
@@ -99,7 +104,6 @@ class IndexService(object):
       if hasattr(model_class, '__searchable__'):
         self.to_update.setdefault(model_class.__name__, []).append(("changed", model))
 
-
   #noinspection PyUnusedLocal
   def after_commit(self, session):
     """
@@ -130,28 +134,27 @@ class IndexService(object):
 
     self.to_update = {}
 
-  def init_app(self, app):
-    """Register a Flask app."""
-    self.app = app
-    self.session = app.db.session
-
 
 class Searcher(object):
   """
   Assigned to a Model class as ``search_query``, which enables text-querying.
   """
 
-  def __init__(self, session, model_class, primary, index):
-    self.session = session
+  def __init__(self, model_class, primary, index, session=None):
     self.model_class = model_class
     self.primary = primary
     self.index = index
+    self.session = session
     self.searcher = index.searcher()
     fields = set(index.schema._fields.keys()) - set([self.primary])
     self.parser = MultifieldParser(list(fields), index.schema)
 
   def __call__(self, query, limit=None):
     session = self.session
+    # When using Flask, get the session from the query attached to the model class.
+    if not session:
+      session = self.model_class.query.session
+
     results = self.index.searcher().search(self.parser.parse(query), limit=limit)
     keys = [x[self.primary] for x in results]
     primary_column = getattr(self.model_class, self.primary)
