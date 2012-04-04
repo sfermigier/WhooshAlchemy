@@ -6,23 +6,19 @@ Whoosh extension to SQLAlchemy.
 """
 
 from setuptools import setup
-import os
 
-os.rename("README.rst", "README.txt")
+long_description = open('README.rst').read()
 
 setup(
     name='WhooshAlchemy',
-    version='0.1.2',
+    version='0.1.3',
     url='https://github.com/sfermigier/WhooshAlchemy',
     license='BSD',
     author='Stefane Fermigier',
     author_email='sf@fermigier.com',
     description='Whoosh extension to SQLAlchemy',
-    long_description=__doc__,
+    long_description=long_description,
     py_modules=['whooshalchemy'],
-    # if you would be using a package instead use packages instead
-    # of py_modules:
-    # packages=['flask_sqlite3'],
     zip_safe=False,
     include_package_data=True,
     platforms='any',
@@ -30,15 +26,11 @@ setup(
         'whoosh', 'sqlalchemy'
     ],
     classifiers=[
-        #'Environment :: Web Environment',
-        #'Intended Audience :: Developers',
-        #'License :: OSI Approved :: BSD License',
-        #'Operating System :: OS Independent',
-        #'Programming Language :: Python',
-        #'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-        #'Topic :: Software Development :: Libraries :: Python Modules'
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     test_suite = 'test',
 )
-
-os.rename("README.txt", "README.rst")
