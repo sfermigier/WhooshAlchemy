@@ -1,4 +1,6 @@
+dist
 .idea
 .tox
 *.pyc
+*.egg-info
 
