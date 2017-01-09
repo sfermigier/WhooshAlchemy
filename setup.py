@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from setuptools import setup
 
-VERSION = '0.3.0'
+VERSION = '0.3.1'
 DEPS = [
     'whoosh',
     'sqlalchemy',

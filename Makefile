@@ -27,3 +27,7 @@ format:
 		-rc $(SRC) *.py
 	-yapf --style google -r -i $(SRC) *.py
 	isort -rc $(SRC) *.py
+
+.PHONY: release
+release: clean
+	python setup.py sdist upload
