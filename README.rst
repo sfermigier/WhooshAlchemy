@@ -1,8 +1,6 @@
 WhooshAlchemy
 =============
 
-ALPHA but actively developed.
-
 Supports the easy text-indexing of SQLAlchemy model fields.
 
 BSD license.
@@ -11,7 +9,7 @@ Written by Stefane Fermigier (http://www.fermigier.com/) based on
 Flask-WhooshAlchemy written by Karl Gyllstromk.
 
 
-Quick start example
+Quick-start example
 -------------------
 
 Import this library:
@@ -85,3 +83,12 @@ and register your models:
 >>> index_service.register_class(MySecondModel)
 
 Etc.
+
+CHANGES
+-------
+
+Version 0.3.0 (2017/01/09)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Python 3 compatibility.
+- Use pytest instead of nose for tests
